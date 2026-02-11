@@ -1,0 +1,96 @@
+Log Personality :
+Achieve push The First image in my Subscription Registry not remote the challenge i need to tagging to push image
+
+# 🐳 Azure Container Registry (ACR) Implementation Lab
+
+
+## 📝 Overview
+This repository documents the process of setting up an Azure Container Registry (ACR),
+building a Docker image locally, and pushing it to a private cloud registry.
+
+---
+
+# Technical Implementation (Step-by-Step)
+
+### 1. Authentication & Environment Setup
+First, I authenticated with Azure using the lab credentials and dynamically retrieved the assigned Resource Group name.
+
+# Login to Azure
+az login -u <username> -p <password>
+
+# Get Resource Group name
+export RESOURCE_GROUP=$(az group list --query "[0].name" -o tsv)
+
+
+
+step 2 :  ACR Provisioning
+
+# Created a private container registry with the Basic SKU in the eastus region.
+az acr create --resource-group $RESOURCE_GROUP --name nautilusacr22771 --sku Basic --location eastus
+
+
+step 3 : . Docker Image Lifecycle
+
+The core of the step3  : 
+Logging into the registry, building the image from a Dockerfile, and tagging it correctly for the ACR domain.
+
+# Registry Authentication
+az acr login --name nautilusacr22771
+
+# Build and Tag the image
+docker build -t nautilusacr22771.azurecr.io/nautilusacr22771:latest .
+
+# Push to Azure Cloud
+docker push nautilusacr22771.azurecr.io/nautilusacr22771:latest
+
+
+
+step 4. Verification & Validation
+
+Finally, I verified that the image was successfully stored in the registry repositories.
+
+# List repositories and tags
+az acr repository list --name nautilusacr22771 --output table
+az acr repository show-tags --name nautilusacr22771 --repository nautilusacr22771 --output table
+
+
+Challenges & Lessons Learned
+
+    Tagging Precision: Ensuring the image tag matches the <registry-name>.azurecr.io format is critical for a successful push.
+    Dynamic Variable Usage: Using --query to fetch the Resource Group name saves time and prevents manual errors in lab environments.
+
+
+
+command:
+
+#1
+az login -u kk_lab_user_main-3fc8a8a1aab84d33@azurekmlprodkodekloud.onmicrosoft.com -p '$4J@V-UD567HU-QU'
+
+#2
+Find RG:
+az group list --query "[0].name" -o tsv
+
+#3
+upload Docker file Azure + Create image in ACR :
+az acr create --resource-group $RESOURCE_GROUP --name nautilusacr22771 --sku Basic --location eastus
+
+#4
+Docker push images:
+az acr login --name nautilusacr22771
+
+#5
+First  docker build From Docker File: 
+docker tag nginx:latest <Registry_Name>.azurecr.io/webapp:v1
+
+#5
+docker build -t nautilusacr22771.azurecr.io/nautilusacr22771:latest .
+
+#6
+docker push nautilusacr22771.azurecr.io/nautilusacr22771:latest
+
+#7 check 
+az acr repository show-tags --name nautilusacr22771 --repository nautilusacr22771 --output table
+az acr repository list --name nautilusacr22771 --output table
+
+
+
